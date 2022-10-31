@@ -8,27 +8,6 @@ import * as util from './util';
 const router = express.Router();
 
 /**
- * Get the signed in user
- * TODO: may need better route and documentation
- * (so students don't accidentally delete this when copying over)
- *
- * @name GET /api/users/session
- *
- * @return - currently logged in user, or null if not logged in
- */
-router.get(
-  '/session',
-  [],
-  async (req: Request, res: Response) => {
-    const user = await UserCollection.findOneByUserId(req.session.userId);
-    res.status(200).json({
-      message: 'Your session info was found successfully.',
-      user: user ? util.constructUserResponse(user) : null
-    });
-  }
-);
-
-/**
  * Sign in user.
  *
  * @name POST /api/users/session
@@ -106,6 +85,7 @@ router.post(
     userValidator.isValidPassword
   ],
   async (req: Request, res: Response) => {
+    console.log("got here");
     const user = await UserCollection.addOne(req.body.username, req.body.password);
     req.session.userId = user._id.toString();
     res.status(201).json({
@@ -118,7 +98,7 @@ router.post(
 /**
  * Update a user's profile.
  *
- * @name PATCH /api/users
+ * @name PUT /api/users
  *
  * @param {string} username - The user's new username
  * @param {string} password - The user's new password
@@ -127,7 +107,7 @@ router.post(
  * @throws {409} - If username already taken
  * @throws {400} - If username or password are not of the correct format
  */
-router.patch(
+router.put(
   '/',
   [
     userValidator.isUserLoggedIn,
@@ -160,8 +140,8 @@ router.delete(
   ],
   async (req: Request, res: Response) => {
     const userId = (req.session.userId as string) ?? ''; // Will not be an empty string since its validated in isUserLoggedIn
-    await UserCollection.deleteOne(userId);
     await FreetCollection.deleteMany(userId);
+    await UserCollection.deleteOne(userId);
     req.session.userId = undefined;
     res.status(200).json({
       message: 'Your account has been deleted successfully.'

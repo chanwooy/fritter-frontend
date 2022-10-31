@@ -1,7 +1,9 @@
 // This file must be in the /api folder for Vercel to detect it as a serverless function
 import type {Request, Response} from 'express';
 import express from 'express';
+import {engine} from 'express-handlebars';
 import session from 'express-session';
+import path from 'path';
 import logger from 'morgan';
 import http from 'http';
 import mongoose from 'mongoose';
@@ -9,7 +11,9 @@ import dotenv from 'dotenv';
 import * as userValidator from '../server/user/middleware';
 import {userRouter} from '../server/user/router';
 import {freetRouter} from '../server/freet/router';
-import MongoStore from 'connect-mongo';
+import {controversyRouter} from '../server/controversy/router';
+import {reflectionRouter} from '../server/reflection/router';
+import {profileRouter} from '../server/profile/router';
 
 // Load environmental variables
 dotenv.config({});
@@ -20,15 +24,14 @@ if (!mongoConnectionUrl) {
   throw new Error('Please add the MongoDB connection SRV as \'MONGO_SRV\'');
 }
 
-const client = mongoose
+mongoose
   .connect(mongoConnectionUrl)
   .then(m => {
     console.log('Connected to MongoDB');
-    return m.connection.getClient();
+    const db = m.connection;
   })
   .catch(err => {
     console.error(`Error connecting to MongoDB: ${err.message as string}`);
-    throw new Error(err.message);
   });
 
 mongoose.connection.on('error', err => {
@@ -37,6 +40,14 @@ mongoose.connection.on('error', err => {
 
 // Initalize an express app
 const app = express();
+
+// Declare the root directory
+app.use(express.static(path.join(__dirname, '../public')));
+
+// View engine setup
+app.engine('html', engine({extname: '.html', defaultLayout: false}));
+app.set('view engine', 'html');
+app.set('views', path.join(__dirname, '../public'));
 
 // Set the port
 app.set('port', process.env.PORT || 3000);
@@ -51,31 +62,30 @@ app.use(express.json());
 app.use(express.urlencoded({extended: false}));
 
 // Initialize cookie session
-// https://www.npmjs.com/package/express-session#options
 app.use(session({
-  secret: '61040', // Should generate a real secret
+  secret: '61040',
   resave: true,
-  saveUninitialized: false,
-  store: MongoStore.create({
-    clientPromise: client,
-    dbName: 'sessions',
-    autoRemove: 'interval',
-    autoRemoveInterval: 10 // Minutes
-  })
+  saveUninitialized: false
 }));
 
 // This makes sure that if a user is logged in, they still exist in the database
 app.use(userValidator.isCurrentSessionUserExists);
 
+// GET home page
+app.get('/', (req: Request, res: Response) => {
+  res.render('index');
+});
+
 // Add routers from routes folder
 app.use('/api/users', userRouter);
 app.use('/api/freets', freetRouter);
+app.use('/api/controversies', controversyRouter);
+app.use('/api/reflections', reflectionRouter);
+app.use('/api/profiles', profileRouter);
 
 // Catch all the other routes and display error message
 app.all('*', (req: Request, res: Response) => {
-  res.status(404).json({
-    error: 'Page not found'
-  });
+  res.status(400).render('error');
 });
 
 // Create server to listen to request at specified port

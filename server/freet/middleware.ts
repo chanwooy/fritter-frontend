@@ -10,7 +10,9 @@ const isFreetExists = async (req: Request, res: Response, next: NextFunction) =>
   const freet = validFormat ? await FreetCollection.findOne(req.params.freetId) : '';
   if (!freet) {
     res.status(404).json({
-      error: `Freet with freet ID ${req.params.freetId} does not exist.`
+      error: {
+        freetNotFound: `Freet with freet ID ${req.params.freetId} does not exist.`
+      }
     });
     return;
   }
@@ -46,7 +48,7 @@ const isValidFreetContent = (req: Request, res: Response, next: NextFunction) =>
  */
 const isValidFreetModifier = async (req: Request, res: Response, next: NextFunction) => {
   const freet = await FreetCollection.findOne(req.params.freetId);
-  const userId = freet.authorId._id;
+  const userId = freet.userId._id;
   if (req.session.userId !== userId.toString()) {
     res.status(403).json({
       error: 'Cannot modify other users\' freets.'

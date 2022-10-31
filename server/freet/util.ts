@@ -5,7 +5,8 @@ import type {Freet, PopulatedFreet} from '../freet/model';
 // Update this if you add a property to the Freet type!
 type FreetResponse = {
   _id: string;
-  author: string;
+  userId: string;
+  profile: string;
   dateCreated: string;
   content: string;
   dateModified: string;
@@ -32,12 +33,16 @@ const constructFreetResponse = (freet: HydratedDocument<Freet>): FreetResponse =
       versionKey: false // Cosmetics; prevents returning of __v property
     })
   };
-  const {username} = freetCopy.authorId;
-  delete freetCopy.authorId;
+  const {profileName} = freetCopy.profileName;
+  delete freetCopy.profileName;
+  const {username} = freetCopy.userId;
+  delete freetCopy.userId;
+
   return {
     ...freetCopy,
     _id: freetCopy._id.toString(),
-    author: username,
+    userId: username,
+    profile: profileName,
     dateCreated: formatDate(freet.dateCreated),
     dateModified: formatDate(freet.dateModified)
   };
