@@ -10,7 +10,8 @@ Vue.use(Vuex);
 const store = new Vuex.Store({
   state: {
     filter: null, // Username to filter shown freets by (null = show all)
-    freets: [], // All freets created in the app
+    freets: [], // All freets created in the app,
+    reflections: [], // All reflections created in the app,
     username: null, // Username of the logged in user
     alerts: {} // global success/error messages encountered during submissions to non-visible forms
   },
@@ -45,6 +46,13 @@ const store = new Vuex.Store({
        */
       state.freets = freets;
     },
+    updateReflections(state, reflections) {
+      /**
+       * Update the stored reflections to the provided reflections.
+       * @param reflections - Reflections to store
+       */
+      state.reflections = reflections;
+    },
     async refreshFreets(state) {
       /**
        * Request the server for the currently available freets.
@@ -52,6 +60,17 @@ const store = new Vuex.Store({
       const url = state.filter ? `/api/users/${state.filter}/freets` : '/api/freets';
       const res = await fetch(url).then(async r => r.json());
       state.freets = res;
+    },
+    async refreshReflections(state) {
+      /**
+       * Request the server for the currently available reflections.
+       */
+      if (state.username) {
+        const url = `/api/reflections/${ state.username }`;
+        const res = await fetch(url).then(async r => r.json());
+        state.reflections = res;
+      }
+      
     }
   },
   // Store data across page refreshes, only discard on browser close
