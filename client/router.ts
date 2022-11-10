@@ -3,6 +3,7 @@ import VueRouter from 'vue-router';
 import FreetsPage from './components/Freet/FreetsPage.vue';
 import AccountPage from './components/Account/AccountPage.vue';
 import LoginPage from './components/Login/LoginPage.vue';
+import ProfilePage from './components/Profile/ProfilePage.vue';
 import ReflectionsPage from './components/Reflection/ReflectionsPage.vue';
 import NotFound from './NotFound.vue';
 
@@ -13,6 +14,7 @@ const routes = [
   {path: '/account', name: 'Account', component: AccountPage},
   {path: '/login', name: 'Login', component: LoginPage},
   {path: '/reflection', name: 'Reflection', component: ReflectionsPage},
+  {path: '/profile', name: 'Profile', component: ProfilePage},
   {path: '*', name: 'Not Found', component: NotFound}
 ];
 

@@ -13,7 +13,9 @@ const store = new Vuex.Store({
     freets: [], // All freets created in the app,
     reflections: [], // All reflections created in the app,
     username: null, // Username of the logged in user
-    alerts: {} // global success/error messages encountered during submissions to non-visible forms
+    currentProfile: null,
+    alerts: {}, // global success/error messages encountered during submissions to non-visible forms
+    profiles: []
   },
   mutations: {
     alert(state, payload) {
@@ -53,6 +55,17 @@ const store = new Vuex.Store({
        */
       state.reflections = reflections;
     },
+    updateProfiles(state, profiles) {
+      /**
+       * Update the stored profiles to the provided profiles.
+       * @param profiles - profiles to store
+       */
+      state.profiles = profiles;
+    },
+    changeProfile(state, profile) {
+      // change the current profile to the given profile
+      state.currentProfile = profile;
+    },
     async refreshFreets(state) {
       /**
        * Request the server for the currently available freets.
@@ -71,6 +84,14 @@ const store = new Vuex.Store({
         state.reflections = res;
       }
       
+    },
+    async refreshProfiles(state) {
+      /**
+       * Request the server for the currently available freets.
+       */
+      const url = '/api/profiles';
+      const res = await fetch(url).then(async r => r.json());
+      state.profiles = res;
     }
   },
   // Store data across page refreshes, only discard on browser close

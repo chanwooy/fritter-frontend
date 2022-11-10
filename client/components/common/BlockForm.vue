@@ -62,7 +62,9 @@ export default {
       setUsername: false, // Whether or not stored username should be updated after form submission
       refreshFreets: false, // Whether or not stored freets should be updated after form submission
       alerts: {}, // Displays success/error messages encountered during form submission
-      callback: null // Function to run after successful form submission
+      callback: null, // Function to run after successful form submission
+      preprocess: null,
+      postprocess: null
     };
   },
   methods: {
@@ -70,6 +72,10 @@ export default {
       /**
         * Submits a form with the specified options from data().
         */
+      if (this.preprocess) {
+        this.preprocess();
+      }
+      
       const options = {
         method: this.method,
         headers: {'Content-Type': 'application/json'},
@@ -109,6 +115,10 @@ export default {
       } catch (e) {
         this.$set(this.alerts, e, 'error');
         setTimeout(() => this.$delete(this.alerts, e), 3000);
+      }
+
+      if (this.postprocess) {
+        this.postprocess();
       }
     }
   }

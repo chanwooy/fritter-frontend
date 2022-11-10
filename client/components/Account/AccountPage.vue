@@ -10,6 +10,7 @@
       <ChangeUsernameForm />
       <ChangePasswordForm />
     </section>
+
     <section>
       <header>
         <h2>Account management</h2>
@@ -32,7 +33,7 @@ export default {
     ChangeUsernameForm,
     ChangePasswordForm,
     DeleteAccountForm,
-    LogoutForm
+    LogoutForm,
   }
 };
 </script>
