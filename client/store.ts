@@ -89,9 +89,21 @@ const store = new Vuex.Store({
       /**
        * Request the server for the currently available freets.
        */
-      const url = '/api/profiles';
-      const res = await fetch(url).then(async r => r.json());
-      state.profiles = res;
+      if (state.username) {
+        const url = `/api/profiles/?user=${state.username}`;
+        const res = await fetch(url).then(async r => r.json());
+        state.profiles = res;
+      } else {
+        state.profiles = [];
+      }
+    },
+    async likeFreet(state, freetId) {
+      const url = `/api/freets/dislike/${freetId}`;
+      await fetch(url);
+    },
+    async dislikeFreet(state, freetId) {
+      const url = `/api/freets/like/${freetId}`;
+      await fetch(url);
     }
   },
   // Store data across page refreshes, only discard on browser close

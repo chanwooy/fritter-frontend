@@ -43,7 +43,7 @@ export default {
         }
     },
     async start() {
-        const url = `/api/profiles`;
+        const url = `/api/profiles/?user=${this.$store.state.username}`;
         try {
             const r = await fetch(url);
             const res = await r.json();

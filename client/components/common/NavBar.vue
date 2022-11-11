@@ -11,7 +11,7 @@
       </h1>
     </div>
     <div class="right">
-      <router-link to="/">
+      <router-link to="/" class=link>
         Home
       </router-link>
       <router-link
@@ -23,18 +23,21 @@
       <router-link
         v-if="$store.state.username"
         to="/profile"
+        class=link
       >
         Profile
       </router-link>
       <router-link
         v-else
         to="/login"
+        class=link
       >
         Login
       </router-link>
       <router-link
         v-if="$store.state.username"
         to="/reflection"
+        class=link
       >
         Reflection
       </router-link>
@@ -59,6 +62,7 @@ nav {
     justify-content: space-between;
     align-items: center;
     position: relative;
+    font-family: "Lucida Console", "Courier New", monospace;
 }
 
 .title {

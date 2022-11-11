@@ -1,6 +1,7 @@
 <!-- Reusable component representing a single freet and its actions -->
 <!-- We've tagged some elements with classes; consider writing CSS using those classes to style them... -->
 
+
 <template>
   <article
     class="freet"
@@ -52,6 +53,9 @@
       Posted at {{ freet.dateModified }}
       <i v-if="freet.edited">(edited)</i>
     </p>
+    <ControversyBar
+      freetId=freet._id
+    />
     <section class="alerts">
       <article
         v-for="(status, alert, index) in alerts"
@@ -65,15 +69,17 @@
 </template>
 
 <script>
+import ControversyBar from '@/components/Controversy/ControversyBar.vue';
+
 export default {
   name: 'FreetComponent',
-  props: {
-    // Data from the stored freet
+  props: { // Data from the stored freet
     freet: {
       type: Object,
       required: true
     }
   },
+  components: {ControversyBar},
   data() {
     return {
       editing: false, // Whether or not this freet is in edit mode

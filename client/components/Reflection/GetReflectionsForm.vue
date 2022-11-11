@@ -44,9 +44,6 @@ export default {
       } else {
         this.value = this.$store.state.username;
       }
-
-      this.$set(this.alerts, e, 'error');
-      setTimeout(() => this.$delete(this.alerts, e), 3000);
     }
   }
 };

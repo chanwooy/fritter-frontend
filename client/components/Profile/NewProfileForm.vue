@@ -15,6 +15,7 @@ export default {
       title: 'Create Profile',
       callback: () => {
         const message = 'Successfully created a profile!';
+        this.$store.commit('refreshProfiles');
         this.$set(this.alerts, message, 'success');
         setTimeout(() => this.$delete(this.alerts, message), 3000);
       },

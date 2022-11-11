@@ -27,6 +27,7 @@ router.get(
       userValidator.isCurrentSessionUserExists
     ],
     async (req: Request, res: Response) => {
+        console.log("getting here");
       const userProfiles = await ProfileCollection.findManyByUsername(req.query.user as string);
       const response = userProfiles.map(util.constructProfileResponse);
       res.status(200).json(response);
